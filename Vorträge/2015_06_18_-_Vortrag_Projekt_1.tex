@@ -1,0 +1,186 @@
+\documentclass{beamer}
+
+\usepackage[ngerman]{babel}
+\usepackage[utf8x]{inputenc}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{tikz}
+\usepackage{graphicx}
+
+\usetikzlibrary{shapes,arrows,positioning,hobby,decorations.markings,fit,backgrounds,calc}
+
+%\usetheme{Singapore}
+\setbeamercovered{transparent}
+
+\setbeamertemplate{section in toc}[sections numbered]
+\setbeamertemplate{subsection in toc}[subsections numbered]
+\setbeamertemplate{subsubsection in toc}[subsubsections numbered]
+
+\newcommand\subsectnum{%
+  \number\numexpr \insertpagenumber-\insertsubsectionstartpage+1\relax.~%
+}
+
+\begin{document}
+\title{Projekt Straßenschilderkennung\\Präsentation Idee}   
+\author{Artem Prokop\\
+Theodor Malaki\\
+Eike Florian Petersen} 
+\date{\today} 
+
+\frame{\titlepage} 
+
+\frame{\frametitle{Inhaltsverzeichnis}\tableofcontents} 
+
+
+\section {Vorstellung des Teams}
+\frame {\frametitle{\thesection. \insertsection}
+\begin{tabular}{l l}
+\hline
+\textbf{Name} & \textbf{Rolle} \\
+\hline
+Artem Prokop & Vorführung \\ 
+Eike Florian Petersen & Vortrag \\
+Theodor Malaki & Dokumentation \\
+\end{tabular}
+}
+
+
+\section {Projektdefinition}
+\frame {\frametitle{\thesection. \insertsection}
+Der Aufbau der Bilderkennung soll anhand des Papers ``A Robust Algorith for Detection and Classification of Traffic Signs in Video Data'' von Tanh Bui-Minh, Ovidiu Ghita, Paul F.Whelan and Trang Hoang umgesetzt werden.
+\newline
+\newline
+\newline
+\begin{tabular}{l l}
+Eingabeformat: & Einzelbild \\
+Ausgabeformat: & Bildliche Darstellung der Funstelle/n \\
+ & und textuelle Beschreibung der gefundenen Objekte \\
+\end{tabular}
+}
+
+\section {Umsetzungsidee}
+\frame {\frametitle{\thesection. \insertsection}
+% define block styles
+\tikzstyle{block} = [rectangle,fill=gray!10,draw,text width=10em,text centered,minimum height=3em]
+\tikzstyle{cloud} = [ellipse, fill=gray!10,draw, text width=5em, text centered, minimum height=3em]
+\tikzstyle{line} = [draw, -latex']
+
+\resizebox{0.66\linewidth}{!}{%
+  \begin{minipage}{\linewidth}
+      \begin{tikzpicture}[->,>=stealth', auto, node distance=1cm, main node/.style={circle,fill=blue!15,draw,font=\sffamily\bfseries}]
+      % place nodes
+      \node [block, text width=13em] (1) {\centering Einzelbild lesen};
+      \node [block, right of = 1, node distance=5.7cm, text width=13em] (2) {Bild vorbereiten (3.1)};
+      \node [block, below of = 2, node distance=1.5cm, text width=13em] (3) {Schilderkennung \\ durch Form (3.2)};
+      \node [block, below of = 3, node distance=1.5cm, text width=13em] (4) {Schildklassifikation (3.3)};
+      \node [block, below of = 4, node distance=1.5cm, text width=13em] (5) {Schild entzerren (3.4)};
+      \node [block, below of = 5, node distance=1.5cm, text width=13em] (6) {Schild erkennen (3.4)};
+      \node [block, right of = 6, node distance=5.7cm, text width=13em] (7) {Einzelbild schreiben \\ textuelle Dokumentation erzeugen};
+      
+      \path [line] (1.east) -- (2.west);
+      \path [line] (2) -- (3);
+      \path [line] (3) -- (4);
+      \path [line] (4) -- (5);
+      \path [line] (5) -- (6);
+      \path [line] (6.east) -- (7.west);
+      
+      \end{tikzpicture}
+  \end{minipage}
+  }
+}
+
+
+\subsection {Bild vorbereiten}
+\frame {\frametitle{\thesection.\thesubsection~ \insertsubsection}
+% define block styles
+\tikzstyle{block} = [rectangle,fill=gray!10,draw,text width=10em,text centered,minimum height=3em]
+\tikzstyle{cloud} = [ellipse, fill=gray!10,draw, text width=5em, text centered, minimum height=3em]
+\tikzstyle{line} = [draw, -latex']
+
+\begin{center}
+\resizebox{0.8\linewidth}{!}{%
+  \begin{minipage}{\linewidth}
+    \centering
+      \begin{tikzpicture}[->,>=stealth', auto, node distance=1cm, main node/.style={circle,fill=blue!15,draw,font=\sffamily\bfseries}]
+      % place nodes
+      \node [block, text width=13em] (1) {Bilddaten entstören};
+      \node [block, below of = 1, node distance=1.5cm, text width=13em] (2) {Farbsegmentierung};
+      \node [block, below of = 2, node distance=1.5cm, text width=13em] (3) {Farbsegmentierung invertieren};
+      
+      \path [line] (1) -- (2);
+      \path [line] (2) -- (3);
+      
+      \end{tikzpicture}
+  \end{minipage}
+}
+\end{center}
+~ \\
+~ \\
+Farbsegmentierung für rot und blau \\
+Beschränkung des Schildkataloges auf eine Schildauswahl
+}
+
+
+\subsection {Schilderkennung durch die Form}
+\frame {\frametitle{\thesection.\thesubsection~ \insertsubsection}
+% define block styles
+\tikzstyle{block} = [rectangle,fill=gray!10,draw,text width=10em,text centered,minimum height=3em]
+\tikzstyle{cloud} = [ellipse, fill=gray!10,draw, text width=5em, text centered, minimum height=3em]
+\tikzstyle{line} = [draw, -latex']
+
+\begin{center}
+\resizebox{0.8\linewidth}{!}{%
+  \begin{minipage}{\linewidth}
+    \centering
+      \begin{tikzpicture}[->,>=stealth', auto, node distance=1cm, main node/.style={circle,fill=blue!15,draw,font=\sffamily\bfseries}]
+      % place nodes
+      \node [block, text width=13em] (1) {Bild segmentieren};
+      \node [block, below of = 1, node distance=1.5cm, text width=13em] (2) {Segmentierte Flächen\\ auf Formen überprüfen};
+      
+      \path [line] (1) -- (2);
+      
+      \end{tikzpicture}
+  \end{minipage}
+}
+\end{center}
+~ \\
+~ \\
+Zur Überprüfung sollen die Formeln aus dem Paper verwendet werden.
+}
+
+
+\subsection {Schildklassifikation}
+\frame {\frametitle{\thesection.\thesubsection~ \insertsubsection}
+Schildklassifikation durch:\\
+\begin{itemize}
+ \item Form\\
+ \item Farbe\\
+ \end{itemize}
+ ~ \\
+ In die Klassen: \\
+ ~ \\
+\begin{tabular}{l l l}
+\hline
+\textbf{Farbe} & \textbf{Form} & \textbf{Kategorie} \\
+\hline
+Rot & Oktagonal & Stop \\ 
+Rot & Dreieck, Spitze unten & Vorfahrt gewähren \\ 
+Rot & Dreieck, Spitze oben & Warnung \\ 
+Rot & Kreis & Verbot \\ 
+Blau & Kreis & Verpflichtend \\
+\end{tabular}
+}
+
+
+\subsection {Schild entzerren \& erkennen}
+\frame {\frametitle{\thesection.\thesubsection~ \insertsubsection}
+ Diesen Punkt haben wir optional angedacht. \\
+~ \\
+~ \\
+\begin{itemize}
+ \item erkannter Bereich wird entzerrt und auf eine einheitliche Größe gebracht\\
+ \item Vergleich mit Bibliotheksdaten\\
+\end{itemize}
+}
+
+\end{document}
+
