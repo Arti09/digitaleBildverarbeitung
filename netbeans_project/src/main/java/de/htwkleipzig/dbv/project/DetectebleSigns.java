@@ -1,0 +1,5 @@
+package de.htwkleipzig.dbv.project;
+
+public enum DetectebleSigns {
+	STOP_SIGN, GIVEAWAY, CROSS, PRIORITY_SIGN, STRAIGHT, PARKING, PEDESTRIAN, CIRCLE, NO_OVERTAKING, PROHIBITION, ONEWAY, NOTHING;
+}
