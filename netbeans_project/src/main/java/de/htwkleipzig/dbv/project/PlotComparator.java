@@ -1,7 +1,6 @@
 package de.htwkleipzig.dbv.project;
 
 import ij.ImagePlus;
-import ij.gui.GenericDialog;
 import ij.gui.Line;
 import ij.gui.Plot;
 import ij.gui.PlotWindow;
@@ -9,6 +8,9 @@ import ij.gui.ProfilePlot;
 import ij.gui.Roi;
 import ij.measure.ResultsTable;
 import ij.process.ImageProcessor;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class PlotComparator {
 
@@ -76,8 +78,9 @@ public class PlotComparator {
 	}
 
 	private boolean checkStopsign(ImageArea area) {
-		int foundBottoms = prepareImage(area);
-		return (foundBottoms < PlotValues.getStopSignValues() - 2 || foundBottoms > PlotValues
+		Map<Integer, Integer> foundBottoms = prepareImage(area);
+		int foundValues = foundBottoms.size();
+		return (foundValues < PlotValues.getStopSignValues() - 2 || foundValues > PlotValues
 				.getStopSignValues() + 1) ? false : true;
 	}
 
@@ -97,7 +100,7 @@ public class PlotComparator {
 		return DetectebleSigns.NOTHING;
 	}
 
-	private int prepareImage(ImageArea area) {
+	private Map<Integer, Integer> prepareImage(ImageArea area) {
 		Roi roi = new Roi(area.xl, area.yl, area.xh - area.xl, area.yh
 				- area.yl);
 
@@ -118,24 +121,39 @@ public class PlotComparator {
 		PlotWindow window = plot.show();
 
 		ResultsTable table = window.getResultsTable();
-		float[] yValues = table.getColumn(1);
+		double[] xValues = table.getColumnAsDoubles(0);
+		double[] yValues = table.getColumnAsDoubles(1);
+
 		int counterBottom = 0;
-		for (int i = 0; i < yValues.length; i++) {
-			if (i > 0) {
-				if ((yValues[i] == 0 && yValues[i - 1] > 0)
-						|| (yValues[i] > 0 && yValues[i - 1] == 0)) {
-					counterBottom++;
-				}
+
+		Map<Integer, Integer> output = new HashMap<Integer, Integer>();
+		double value = 256;
+		double previousValue = 256;
+		for (int i = 0; i < xValues.length; i++) {
+			if (i == 0) {
+				previousValue = table.getValueAsDouble(1, i);
 			} else {
-				if (yValues[i] == 0) {
-					counterBottom++;
+				if (previousValue != 256) {
+					previousValue = value;
+				}
+				value = table.getValueAsDouble(1, i);
+				if ((value == 0 && counterBottom > 0)
+						|| (value > 0 && previousValue == 0)) {
+					output.put(i, (int) value);
 				}
 			}
+
 		}
+		/*
+		 * for (int i = 0; i < yValues.length; i++) { if (i > 0) { if
+		 * ((yValues[i] == 0 && yValues[i - 1] > 0) || (yValues[i] > 0 &&
+		 * yValues[i - 1] == 0)) { counterBottom++; } } else { if (yValues[i] ==
+		 * 0) { counterBottom++; } } }
+		 */
 		window.close();
-		GenericDialog gd = new GenericDialog("Counter");
-		gd.addMessage("counter = " + counterBottom);
-		gd.showDialog();
-		return counterBottom;
+		// GenericDialog gd = new GenericDialog("Counter");
+		// gd.addMessage("counter = " + counterBottom);
+		// gd.showDialog();
+		return output;
 	}
 }
