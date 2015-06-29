@@ -1,6 +1,5 @@
 package de.htwkleipzig.dbv.project;
 
-import ij.IJ;
 import ij.ImagePlus;
 import ij.Prefs;
 import ij.gui.GenericDialog;
@@ -134,7 +133,7 @@ public class ShapeCheck implements PlugInFilter {
 		}
 
 		R = m[0] / (width * height);
-		//IJ.write(E + "\n " + T + "\n " + R);
+		// IJ.write(E + "\n " + T + "\n " + R);
 
 		// Entscheide welche geometrische Form dasgestellt wird.
 		// 0:= Ellipse
@@ -143,16 +142,17 @@ public class ShapeCheck implements PlugInFilter {
 		// 3:= Achteck
 		// -1:= Fehler (die geometrische Form kann nicht erkannt werden)
 
-		if (0.97 < E && E < 1)
-			return 0;
-		else {
+		if (0.97 < E && E < 1) {
+			if (0.7 <= R && R < 1)
+				return 3;
+			else
+				return 0;
+		} else {
 			if (0.91 < T && T < 1)
 				return 1;
 			else {
-			    if( 0.5 < R && R < 0.7 )
-                    return 2;
-			    if (0.7 <= R && R < 1)
-					return 3;
+				if (0.5 < R && R < 0.7)
+					return 2;
 				else
 					return -1;
 			}

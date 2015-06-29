@@ -30,7 +30,7 @@ public class PlotComparator {
 	 */
 	public DetectebleSigns comparePlot(ImageArea area, int form) {
 		switch (form) {
-		case 3:
+		case 0:
 			if (color.compareTo(SegmentedColor.RED) == 0) {
 				return checkRedCircle(area);
 			} else if (color.compareTo(SegmentedColor.BLUE) == 0) {
@@ -54,7 +54,7 @@ public class PlotComparator {
 			} else {
 				return DetectebleSigns.NOTHING;
 			}
-		case 0:
+		case 3:
 			if (color.compareTo(SegmentedColor.RED) == 0) {
 				if (checkStopsign(area)) {
 					ImagePlus image = new ImagePlus(
@@ -75,7 +75,7 @@ public class PlotComparator {
 	}
 
 	private boolean checkStopsign(ImageArea area) {
-		int foundBottoms = prepareImage(area);
+		int foundBottoms = prepareImage(area, new int[] { 0, 43, 80, 43 });
 		return (foundBottoms < PlotValues.getStopSignValues() - 2 || foundBottoms > PlotValues
 				.getStopSignValues() + 1) ? false : true;
 	}
@@ -96,7 +96,7 @@ public class PlotComparator {
 		return DetectebleSigns.NOTHING;
 	}
 
-	private int prepareImage(ImageArea area) {
+	private int prepareImage(ImageArea area, int[] lineplot) {
 		Roi roi = new Roi(area.xl, area.yl, area.xh - area.xl, area.yh
 				- area.yl);
 
@@ -110,7 +110,7 @@ public class PlotComparator {
 		ImagePlus imageScaled = new ImagePlus("last", lastIpp);
 		// imageScaled.show();
 
-		Line line = new Line(0, 43, 80, 43);
+		Line line = new Line(lineplot[0], lineplot[1], lineplot[2], lineplot[3]);
 		imageScaled.setRoi(line);
 		ProfilePlot profile = new ProfilePlot(imageScaled);
 		Plot plot = profile.getPlot();
