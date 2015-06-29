@@ -9,9 +9,6 @@ import ij.gui.Roi;
 import ij.measure.ResultsTable;
 import ij.process.ImageProcessor;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class PlotComparator {
 
 	ImageProcessor ip;
@@ -33,7 +30,7 @@ public class PlotComparator {
 	 */
 	public DetectebleSigns comparePlot(ImageArea area, int form) {
 		switch (form) {
-		case 0:
+		case 3:
 			if (color.compareTo(SegmentedColor.RED) == 0) {
 				return checkRedCircle(area);
 			} else if (color.compareTo(SegmentedColor.BLUE) == 0) {
@@ -57,7 +54,7 @@ public class PlotComparator {
 			} else {
 				return DetectebleSigns.NOTHING;
 			}
-		case 3:
+		case 0:
 			if (color.compareTo(SegmentedColor.RED) == 0) {
 				if (checkStopsign(area)) {
 					ImagePlus image = new ImagePlus(
@@ -78,9 +75,8 @@ public class PlotComparator {
 	}
 
 	private boolean checkStopsign(ImageArea area) {
-		Map<Integer, Integer> foundBottoms = prepareImage(area);
-		int foundValues = foundBottoms.size();
-		return (foundValues < PlotValues.getStopSignValues() - 2 || foundValues > PlotValues
+		int foundBottoms = prepareImage(area);
+		return (foundBottoms < PlotValues.getStopSignValues() - 2 || foundBottoms > PlotValues
 				.getStopSignValues() + 1) ? false : true;
 	}
 
@@ -100,7 +96,7 @@ public class PlotComparator {
 		return DetectebleSigns.NOTHING;
 	}
 
-	private Map<Integer, Integer> prepareImage(ImageArea area) {
+	private int prepareImage(ImageArea area) {
 		Roi roi = new Roi(area.xl, area.yl, area.xh - area.xl, area.yh
 				- area.yl);
 
@@ -121,39 +117,24 @@ public class PlotComparator {
 		PlotWindow window = plot.show();
 
 		ResultsTable table = window.getResultsTable();
-		double[] xValues = table.getColumnAsDoubles(0);
-		double[] yValues = table.getColumnAsDoubles(1);
-
+		float[] yValues = table.getColumn(1);
 		int counterBottom = 0;
-
-		Map<Integer, Integer> output = new HashMap<Integer, Integer>();
-		double value = 256;
-		double previousValue = 256;
-		for (int i = 0; i < xValues.length; i++) {
-			if (i == 0) {
-				previousValue = table.getValueAsDouble(1, i);
-			} else {
-				if (previousValue != 256) {
-					previousValue = value;
+		for (int i = 0; i < yValues.length; i++) {
+			if (i > 0) {
+				if ((yValues[i] == 0 && yValues[i - 1] > 0)
+						|| (yValues[i] > 0 && yValues[i - 1] == 0)) {
+					counterBottom++;
 				}
-				value = table.getValueAsDouble(1, i);
-				if ((value == 0 && counterBottom > 0)
-						|| (value > 0 && previousValue == 0)) {
-					output.put(i, (int) value);
+			} else {
+				if (yValues[i] == 0) {
+					counterBottom++;
 				}
 			}
-
 		}
-		/*
-		 * for (int i = 0; i < yValues.length; i++) { if (i > 0) { if
-		 * ((yValues[i] == 0 && yValues[i - 1] > 0) || (yValues[i] > 0 &&
-		 * yValues[i - 1] == 0)) { counterBottom++; } } else { if (yValues[i] ==
-		 * 0) { counterBottom++; } } }
-		 */
 		window.close();
 		// GenericDialog gd = new GenericDialog("Counter");
 		// gd.addMessage("counter = " + counterBottom);
 		// gd.showDialog();
-		return output;
+		return counterBottom;
 	}
 }

@@ -140,6 +140,7 @@ public class ShapeCheck implements PlugInFilter {
 		// 0:= Ellipse
 		// 1:= Dreieck
 		// 2:= Rechteck
+		// 3:= Achteck
 		// -1:= Fehler (die geometrische Form kann nicht erkannt werden)
 
 		if (0.97 < E && E < 1)
@@ -148,8 +149,10 @@ public class ShapeCheck implements PlugInFilter {
 			if (0.91 < T && T < 1)
 				return 1;
 			else {
-				if (0.7 < R && R < 1)
-					return 2;
+			    if( 0.5 < R && R < 0.7 )
+                    return 2;
+			    if (0.7 <= R && R < 1)
+					return 3;
 				else
 					return -1;
 			}
