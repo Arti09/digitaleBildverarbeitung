@@ -180,7 +180,7 @@ public class SignDetection implements PlugInFilter {
                     } else if (form == 2) {
                         ipp.drawString("Dreieck", ia.xl, ia.yl);
                     } else {
-                        ipp.drawString("Sechseck", ia.xl, ia.yl);
+                        ipp.drawString("Achteck", ia.xl, ia.yl);
                     }
                     
                 }

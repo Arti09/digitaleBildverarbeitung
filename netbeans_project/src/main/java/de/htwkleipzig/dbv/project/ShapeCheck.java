@@ -134,7 +134,7 @@ public class ShapeCheck implements PlugInFilter {
 		}
 
 		R = m[0] / (width * height);
-		IJ.write(E + "\n " + T + "\n " + R);
+		//IJ.write(E + "\n " + T + "\n " + R);
 
 		// Entscheide welche geometrische Form dasgestellt wird.
 		// 0:= Ellipse
