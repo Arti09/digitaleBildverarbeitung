@@ -56,19 +56,7 @@ public class SignDetection implements PlugInFilter {
 		}
 		return ip;
 	}
-
-	private int getDetectedForm(ImageProcessor ipp, ImageArea ia) {
-		/********************
-		 * Replace this through the new function to find a sign form For
-		 ********************/
-		// throw new UnsupportedOperationException("Not supported yet."); //To
-		// change body of generated methods, choose Tools | Templates.
-		/********************
-		 * Replace until here to break the circle return int{x,y,widht,height}
-		 ********************/
-		return 0;
-	}
-
+        
 	/***
 	 * Searches for a sign form inside of the image and return it's coordinates,
 	 * width and height
@@ -134,7 +122,7 @@ public class SignDetection implements PlugInFilter {
 		double mask_factor = 2.0;
 		String color = "RED";
 
-		int min_seg = 30;
+		int min_seg = 100;
 
 		// Build Input Panel for Values
 		GenericDialog gd = new GenericDialog("New Image");
@@ -151,7 +139,7 @@ public class SignDetection implements PlugInFilter {
 		mask_factor = gd.getNextNumber();
 		color = gd.getNextChoice();
 		min_seg = (int) gd.getNextNumber();
-
+                
 		// Segment the picture by selected color
 		ImageProcessor ipp = segementByColor(SegmentedColor.RED.toString()
 				.equals(color) ? Glob.SHIFTMASK_RED : SegmentedColor.BLUE
@@ -159,27 +147,24 @@ public class SignDetection implements PlugInFilter {
 				: Glob.SHIFTMASK_GREEN, mask_factor);
 		// Find the coordinates of the sign form
 		ArrayList<ImageArea> alia = new ArrayList<>();
-		ipp = AreaDetection
-				.findAreas(ipp, min_seg, alia, Glob.PIXELCOLOR_WHITE);
-
-		// int[] coordinates = searchForSignForm(ipp, min_seg, max_seg);
+		ipp = AreaDetection.findAreas(ipp, min_seg, alia, Glob.PIXELCOLOR_WHITE);
 
 		// Draw found area into the image
 		ipp.setColor(Color.RED);
 
-		PlotComparator comparator = new PlotComparator(ipp,
-				SegmentedColor.valueOf(color));
+		PlotComparator comparator = new PlotComparator(ipp, SegmentedColor.valueOf(color));
 		List<DetectebleSigns> detectedSigns = new ArrayList<DetectebleSigns>();
 		for (ImageArea ia : alia) {
-			int form = getDetectedForm(ipp, ia);
-			form = 3;
-			DetectebleSigns sign = comparator.comparePlot(ia, form);
-			if (sign.compareTo(DetectebleSigns.NOTHING) != 0) {
-				detectedSigns.add(sign);
-			}
-			ipp.drawRect(ia.xl, ia.yl, ia.xh - ia.xl + 1, ia.yh - ia.yl + 1);
+                    int form = ShapeCheck.getshape(ipp, ia.xl, ia.yl, ia.xh - ia.xl + 1, ia.yh - ia.yl + 1);
+                    if (form != -1) {
+                        // Detect a Sign
+                        ipp.drawRect(ia.xl, ia.yl, ia.xh - ia.xl + 1, ia.yh - ia.yl + 1);
+                        DetectebleSigns sign = comparator.comparePlot(ia, form);
+                        if (sign.compareTo(DetectebleSigns.NOTHING) != 0) {
+                                detectedSigns.add(sign);
+                        }
+                    }
 		}
-
 		// Show image
 		new ImagePlus("segmented by color - " + color, ipp).show();
 	}

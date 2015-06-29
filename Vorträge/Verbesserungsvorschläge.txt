@@ -1,0 +1,6 @@
+Verbesserungen:
+
+- Aufläsung des Bildes kleiner rechnen
+- Bei der Gruppenfindung nur noch jedes 2., 3. oder 4.Pixel überprüfen
+- Endgültige Schilderkennung anhand von Skeletten
+- 
