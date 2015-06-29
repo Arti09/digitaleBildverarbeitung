@@ -25,7 +25,7 @@ public class PlotComparator {
 	 * 
 	 * @param area
 	 * @param form
-	 *            0=Circle, 1=Triangle, 2=Rectangle, 3=Polygon
+	 *            3=Circle, 1=Triangle, 2=Rectangle, 0=Polygon
 	 * @return
 	 */
 	public DetectebleSigns comparePlot(ImageArea area, int form) {

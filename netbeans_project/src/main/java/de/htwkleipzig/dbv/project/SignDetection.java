@@ -156,7 +156,6 @@ public class SignDetection implements PlugInFilter {
 				.findAreas(ipp, min_seg, alia, Glob.PIXELCOLOR_WHITE);
 
 		// Draw found area into the image
-
 		PlotComparator comparator = new PlotComparator(ipp,
 				SegmentedColor.valueOf(color));
 		List<DetectebleSigns> detectedSigns = new ArrayList<DetectebleSigns>();
