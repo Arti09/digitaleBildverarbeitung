@@ -4,7 +4,6 @@ import ij.ImagePlus;
 import ij.Prefs;
 import ij.gui.GenericDialog;
 import ij.plugin.filter.PlugInFilter;
-import ij.process.FloodFiller;
 import ij.process.ImageProcessor;
 
 public class ShapeCheck implements PlugInFilter {
@@ -61,30 +60,48 @@ public class ShapeCheck implements PlugInFilter {
 		int fg = Prefs.blackBackground ? 255 : 0;
 		int foreground = ip.isInvertedLut() ? 255 - fg : fg;
 		int background = 255 - foreground;
-		FloodFiller ff = new FloodFiller(ip);
-		ip.setColor(127);
-		for (int y = 0; y < height; y++) {
-			if (ip.getPixel(0, y) == background)
-				ff.fill(0, y);
-			if (ip.getPixel(width - 1, y) == background)
-				ff.fill(width - 1, y);
-		}
-		for (int x = 0; x < width; x++) {
-			if (ip.getPixel(x, 0) == background)
-				ff.fill(x, 0);
-			if (ip.getPixel(x, height - 1) == background)
-				ff.fill(x, height - 1);
-		}
-		byte[] pixels = (byte[]) ip.getPixels();
-		int n = width * height;
-		for (int i = 0; i < n; i++) {
-			if (pixels[i] == 127)
-				pixels[i] = (byte) background;
-			else
-				pixels[i] = (byte) foreground;
-		}
-		ip.invert();
+		// new ImagePlus("test before", ip).show();
 
+		// FloodFiller ff = new FloodFiller(ip);
+		// ip.setColor(127);
+		/*
+		 * for (int y = 0; y < height; y++) { if (ip.getPixel(0, y) ==
+		 * background) ff.fill(0, y); if (ip.getPixel(width - 1, y) ==
+		 * background) ff.fill(width - 1, y); } for (int x = 0; x < width; x++)
+		 * { if (ip.getPixel(x, 0) == background) ff.fill(x, 0); if
+		 * (ip.getPixel(x, height - 1) == background) ff.fill(x, height - 1); }
+		 */
+
+		// byte[] pixels = (byte[]) ip.getPixels();
+		/*
+		 * int n = width * height; for (int i = 0; i < n - 1; i++) { if
+		 * (pixels[i] == 127) pixels[i] = (byte) background; else if (pixels[i]
+		 * == 0 && pixels[i + 1] == 255) pixels[i] = (byte) foreground; }
+		 */
+		for (int y = 0; y < height; y++) {
+			for (int x = 0; x < width; x++) {
+				if (ip.getPixel(x, y) == 0) {
+					int x2 = 0;
+					for (x2 = width - 1; x2 >= 0; x2--) {
+						if (ip.getPixel(x2, y) == 0) {
+							break;
+						}
+					}
+					// ip.putPixel(x, y, (byte) 127);
+					// ip.putPixel(x2, y, (byte) 127);
+					for (int x3 = x; x3 < x2; x3++) {
+						ip.putPixel(x3, y, (byte) 0);
+						// pixels[x3 + y * height] = (byte) 255;
+					}
+
+					break;
+				}
+			}
+		}
+
+		// new ImagePlus("test", ip).show();
+		ip.invert();
+		// new ImagePlus("test", ip).show();
 		// Bestimme die zentrale Momente m_00, m_20, m_02 und m_11.
 		int s_x = 0;
 		int s_y = 0;
@@ -143,7 +160,10 @@ public class ShapeCheck implements PlugInFilter {
 		// -1:= Fehler (die geometrische Form kann nicht erkannt werden)
 
 		if (0.97 < E && E < 1) {
-			if (0.7 <= R && R < 1)
+			// GenericDialog gd = new GenericDialog("Counter");
+			// gd.addMessage("E = " + E + " T = " + T + " R = " + R);
+			// gd.showDialog();
+			if (0.8 <= R && R < 1)
 				return 3;
 			else
 				return 0;
@@ -151,11 +171,12 @@ public class ShapeCheck implements PlugInFilter {
 			if (0.91 < T && T < 1)
 				return 1;
 			else {
-				if (0.5 < R && R < 0.7)
+				if (0.8 <= R && R < 1)
 					return 2;
 				else
 					return -1;
 			}
 		}
+		// if (0.5 < R && R < 0.85)
 	}
 }

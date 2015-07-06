@@ -122,6 +122,8 @@ public class SignDetection implements PlugInFilter {
 
 	@Override
 	public void run(ImageProcessor ip) {
+		long start = System.currentTimeMillis();
+
 		// Values
 		double mask_factor = 2.0;
 		String color = "RED";
@@ -151,7 +153,7 @@ public class SignDetection implements PlugInFilter {
 				.toString().equals(color) ? Glob.SHIFTMASK_BLUE
 				: Glob.SHIFTMASK_GREEN, mask_factor);
 		// Find the coordinates of the sign form
-		ArrayList<ImageArea> alia = new ArrayList<>();
+		ArrayList<ImageArea> alia = new ArrayList<ImageArea>();
 		ipp = AreaDetection
 				.findAreas(ipp, min_seg, alia, Glob.PIXELCOLOR_WHITE);
 
@@ -167,9 +169,10 @@ public class SignDetection implements PlugInFilter {
 				ipp.drawRect(ia.xl, ia.yl, ia.xh - ia.xl + 1, ia.yh - ia.yl + 1);
 				// Detect a Sign
 				DetectebleSigns sign = comparator.comparePlot(ia, form);
-				if (sign.compareTo(DetectebleSigns.NOTHING) == 0 && form == 1) {
-					sign = comparator.comparePlot(ia, 3);
-				}
+				// if (sign.compareTo(DetectebleSigns.NOTHING) == 0 && form ==
+				// 1) {
+				// sign = comparator.comparePlot(ia, 3);
+				// }
 				if (sign.compareTo(DetectebleSigns.NOTHING) != 0) {
 					detectedSigns.add(sign);
 					ipp.setColor(Color.RED);
@@ -178,13 +181,43 @@ public class SignDetection implements PlugInFilter {
 					if (sign == DetectebleSigns.STOP_SIGN) {
 						ipp.drawString("STOP-SIGN", ia.xl, ia.yl);
 					}
+					if (sign == DetectebleSigns.STRAIGHT) {
+						ipp.drawString("STRAIGHT-SIGN", ia.xl, ia.yl);
+					}
+					if (sign == DetectebleSigns.CIRCLE) {
+						ipp.drawString("CIRCLE-SIGN", ia.xl, ia.yl);
+					}
+					if (sign == DetectebleSigns.GIVEAWAY) {
+						ipp.drawString("GIVEAWAY-SIGN", ia.xl, ia.yl);
+					}
+					if (sign == DetectebleSigns.CROSS) {
+						ipp.drawString("CROSS-SIGN", ia.xl, ia.yl);
+					}
+					if (sign == DetectebleSigns.NO_OVERTAKING) {
+						ipp.drawString("NO-OVERTAKING-SIGN", ia.xl, ia.yl);
+					}
+					if (sign == DetectebleSigns.ONEWAY) {
+						ipp.drawString("ONEWAY-SIGN", ia.xl, ia.yl);
+					}
+					if (sign == DetectebleSigns.PARKING) {
+						ipp.drawString("PARKING-SIGN", ia.xl, ia.yl);
+					}
+					if (sign == DetectebleSigns.PEDESTRIAN) {
+						ipp.drawString("PEDESTRIAN-SIGN", ia.xl, ia.yl);
+					}
+					if (sign == DetectebleSigns.PRIORITY_SIGN) {
+						ipp.drawString("PRIORITY-SIGN", ia.xl, ia.yl);
+					}
+					if (sign == DetectebleSigns.PROHIBITION) {
+						ipp.drawString("PROHIBITION-SIGN", ia.xl, ia.yl);
+					}
 				} else {
 					if (form == 0) {
 						ipp.drawString("Kreis", ia.xl, ia.yl);
 					} else if (form == 1) {
 						ipp.drawString("Dreieck", ia.xl, ia.yl);
 					} else if (form == 3) {
-						ipp.drawString("Sechseck", ia.xl, ia.yl);
+						ipp.drawString("Achteck", ia.xl, ia.yl);
 					} else {
 						ipp.drawString("Viereck", ia.xl, ia.yl);
 					}
@@ -194,5 +227,7 @@ public class SignDetection implements PlugInFilter {
 		}
 		// Show image
 		new ImagePlus("segmented by color - " + color, ipp).show();
+
+		IJ.showStatus("" + (System.currentTimeMillis() - start));
 	}
 }
